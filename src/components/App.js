@@ -15,12 +15,16 @@ class App extends Component {
   }
 
   async detectAsset() {
+    console.log(window.location);
     const urlParams = new URLSearchParams(window.location.search)
+    // console.log("urlParams", urlParams.get('address'));
     const address = urlParams.get('address')
+    // console.log(address);
     this.setState({ contractAddress: address })
   }
 
   async loadWeb3() {
+    console.log(window.ethereum);
     if(typeof window.ethereum!=='undefined'){
       const web3 = new Web3(window.ethereum)
       this.setState({web3: web3})
@@ -34,7 +38,11 @@ class App extends Component {
   async loadBlockchainData() {
     const web3 = await this.loadWeb3()
     const accounts = await web3.eth.getAccounts()
+    console.log(web3);
+    console.log(accounts);
     this.setState({ account: accounts[0] })
+    console.log("-----");
+    console.log(this.state.contractAddress);
     if(this.state.contractAddress) {
       await this.loadAsset()
     }
@@ -56,6 +64,8 @@ class App extends Component {
 
   async loadAsset() {
     const web3 = await this.loadWeb3()
+    console.log("-----");
+    console.log(this.state.contractAddress);
     const contract = new web3.eth.Contract(Asset.abi, this.state.contractAddress)
     const name = await contract.methods.name().call()
     const status = await contract.methods.status().call()
